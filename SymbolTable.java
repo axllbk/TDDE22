@@ -66,114 +66,115 @@ public class SymbolTable {
 	 */
 	public void put(String key, Character val) {
 		int hash = hash(key);
-		for(int i = 0; i < M; i++){
-			if(hash + i < M){
-				if(keys[hash + i] == null || keys[hash + i].equals(key)){
-					assign(hash + i, key, val);
-					N++;
-					break;
-				}
-			}else{
-				if(keys[hash + i - M] == null || keys[hash + i - M].equals(key)){
-					assign(hash + i - M, key, val);
-					N++;
-					break;
-				}
-			}
-		}
-		return;
-	}
+        for(int i = 0; i < M; i++){
+            if(hash + i < M){
+                if(keys[hash + i] == null || keys[hash + i].equals(key)){
+                    assign(hash + i, key, val);
+                    N++;
+                    break;
+                }
+            }else{
+                if(keys[hash + i - M] == null || keys[hash + i - M].equals(key)){
+                    assign(hash + i - M, key, val);
+                    N++;
+                    break;
+                }
+            }
+        }
+	} // dummy code
 
 	/**
 	 * Return the value associated with the given key, null if no such value
 	 */
 	public Character get(String key) {
 		int hash = hash(key);
-		for(int i = 0; i < M; i++){
-			if(hash + i < M){
-				if(keys[hash + i] != null && keys[hash + i].equals(key))
-					return vals[hash + i];
-			}else{
-				if(keys[hash + i] != null && keys[hash + i - M].equals(key))
-					return vals[hash + i - M];
-			}
-		}
-		return null;
+        for(int i = 0; i < M; i++){
+          if(hash + i < M){
+            if(keys[hash + i] != null)
+              continue;
+            if(keys[hash + i].equals(key))
+              return vals[hash + i];
+            if(keys[hash + i - M] != null)
+              continue;
+            if(keys[hash + i - M].equals(key))
+              return vals[hash + i - M];
+            }
+        }
+        return null;
 	}
 
 	/**
 	 * Delete the key (and associated value) from the symbol table
 	 */
 	public void delete(String key) {
-		int hash = hash(key);
-		for(int i = 0; i < M; i++){
-			if(hash + i < M){
-				if(keys[hash + i].equals(key)){
-					clear(hash + i);
-					if(i == 0) //Could check for all cases as well, but might not be optimal
-						deleteCheck(hash + i);
-					N--;
-					break;
-				}
-			}else{
-				if(keys[hash + i - M].equals(key)){
-					clear(hash + i - M);
-					N--;
-					break;
-				}
-			}
-		}
-		return;
-	}
+        int hash = hash(key);
+        for(int i = 0; i < M; i++){
+            if(hash + i < M){
+                if(keys[hash + i].equals(key)){
+                    clear(hash + i);
+                    N--;
+                    break;
+                }
+            }else{
+                if(keys[hash + i - M].equals(key)){
+                    clear(hash + i - M);
+                    N--;
+                    break;
+                }
+            }
+        }
+        return;
+    } // dummy code
 
-	/**
-	 * Runs if a key on the correct hash position was removed. Looks for another
-	 * key that shares that hash value and, if a match is found, moves that
-	 * key-value pair to the vacant correct hash position and returns.
-	 */
-	private void deleteCheck(int hash){
-		for(int i = 1; i < M; i++){
-			if(hash + i < M){
-				if(keys[hash + i] != null && hash == hash(keys[hash + i])){
-					move(hash, hash + i);
-					break;
-				}
-			}else{
-				if(keys[hash + i - M] != null && hash == hash(keys[hash + i - M])){
-					move(hash, hash + i - M);
-					break;
-				}
-			}
-		}
-		return;
-	}
+    private void deleteCheck(int hash){
+    	Integer[] test = new Integer[0];
+    	int index = 0;
+        for(int i = 1; i < M; i++){
+        		if(hash + i < M){
+        			if(keys[hash + i] == null) continue;
+        			if(hash == hash(keys[hash + i])){
+        				move(hash, hash + i);
+        				break;
+        			}
+        		}else{
+        			if(keys[hash + i - M] == null) continue;
+        			if(hash == hash(keys[hash + i - M])){
+        				move(hash, hash + i - M);
+        				break;
+        			}
+        		}
+        	}
+        return;
+    }
 
-	/**
-	 * Assignes a key-value pair to an index.
-	 */
-	private void assign(int index, String key, char val){
-		keys[index] = key;
-		vals[index] = val;
-		return;
-	}
+    /**
+  	 * Assignes a key-value pair to an index.
+  	 */
+  	private void assign(int index, String key, char val){
+  		keys[index] = key;
+  		vals[index] = val;
+  		return;
+  	}
 
-	/**
-	 * Clears a key-value pair from an index.
-	 */
-	private void clear(int index){
-		keys[index] = null;
-		vals[index] = null;
-		return;
-	}
+  	/**
+  	 * Clears a key-value pair from an index.
+  	 */
+  	private void clear(int index){
+  		keys[index] = null;
+  		vals[index] = null;
+      deleteCheck(index);
+  		return;
+  	}
 
-	/**
-	 * Moves the given key-value pair to the new index.
-	 */
-	private void move(int newIndex, int oldIndex){
-		assign(newIndex, keys[oldIndex], vals[oldIndex]);
-		clear(oldIndex);
-		return;
-	}
+  	/**
+  	 * Moves the given key-value pair to the new index.
+  	 */
+  	private void move(int newIndex, int oldIndex){
+  		assign(newIndex, keys[oldIndex], vals[oldIndex]);
+  		clear(oldIndex);
+  		return;
+  	}
+
 	/**
 	 * Print the contents of the symbol table
 	 */
