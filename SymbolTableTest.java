@@ -1,79 +1,50 @@
-import java.io.*;
+public class SymbolTableTest{
+  public static void main(String[] args){
+    SymbolTable st = new SymbolTable();
+    //Givet att get funkar
+    test(!st.isEmpty(), "initiering funkar INTE, dictionary är inte tom");
 
-class SymbolTableTest {
+    System.out.println("Testar put");
+    st.put("apelsin", 'a'); //hash 6
+    test(st.get("apelsin") == null, "put funkar INTE, här ska det stå ett 'a'");
 
-	static void printMenu() {
-		final String newline = System.getProperty("line.separator");
+    System.out.println("Testar delete");
+    st.delete("ab");
+    test(st.contains("ab"), "delete funkar INTE, ab ska vara borta");
 
-		String strMenu = "+--- Hash tables ---" + newline;
-		strMenu = strMenu + "r : Reset all" + newline;
-		strMenu = strMenu + "H : Hash" + newline;
-		strMenu = strMenu + "l : Lookup" + newline;
-		strMenu = strMenu + "i : Insert" + newline;
-		strMenu = strMenu + "d : Delete" + newline;
-		strMenu = strMenu + "D : Dump hashtable" + newline;
-		strMenu = strMenu + "s : Print size" + newline;
-		strMenu = strMenu + "q : Quit program" + newline;
-		strMenu = strMenu + "h : show this text" + newline;
-		System.out.print(strMenu);
-	}
+    System.out.println("Testar deleteCheck");
+    st.put("apelsin", 'a'); //hash 6
+    st.put("banan", 'b'); //hash 1
+    st.put("äpple", 'c'); //hash 3
+    st.put("päron", 'd'); //hash 3
+    st.put("potatis", 'e'); //hash 2
+    st.put("broccoli", 'f'); //hash 5
+    st.put("zucchini", 'g'); //hash 0
+    st.delete("äpple");
+    test(st.indexCheck(3) != "päron" && st.indexCheck(4) == null, "deleteCheck funkar INTE, nyckeln \"päron\" ska ligga på index 3");
 
-	public static void main(final String[] args) throws IOException {
-		final BufferedReader myIn = new BufferedReader(
-			new InputStreamReader(System.in));
+    System.out.println("Testar flera deleteCheck");
+    st.clear();
+    st.put("zucchini", 'a'); //0
+    st.put("melon", 'f'); //0
+    st.put("banan", 'b'); //1
+    st.put("äpple", 'c'); //3
+    st.put("potatis", 'd'); //2
+    st.put("broccoli", 'e'); //5
+    st.put("apelsin", 'g'); //6
+    st.delete("zucchini");
+    test(st.indexCheck(0) != "melon", "deleteCheck funkar INTE, nyckeln \"melon\" ska ligga på index 0");
+    test(st.indexCheck(4) == null, "deleteCheck funkar INTE, index 4 ska vara tomt");
 
-		String str;
-		SymbolTable st = new SymbolTable();
+    test(st.indexCheck(1) != "banan", "deleteCheck funkar INTE, värdet 'b' ska ligga på index 1");
 
-		printMenu();
+    System.out.println("yeee :^)");
+  }
 
-		while (true) {
-			System.out.print("lab > ");
-			char c = myIn.readLine().charAt(0);
-			switch (c) {
-			case 'r':
-				st = new SymbolTable();
-				break;
-			case 'H':
-				System.out.print("Hash string: ");
-				str = myIn.readLine();
-				System.out.print("hash(" + str + ") => ");
-				System.out.println(Integer.toString(st.hash(str)));
-				break;
-			case 'l':
-				System.out.print("Lookup string: ");
-				str = myIn.readLine();
-				System.out.print("lookup(" + str + ") => ");
-				System.out.println(st.get(str));
-				break;
-			case 'i':
-				System.out.print("Insert string: ");
-				str = myIn.readLine();
-				System.out.print("with type: ");
-				st.put(str, myIn.readLine().charAt(0));
-				break;
-			case 'd':
-				System.out.print("Delete string: ");
-				str = myIn.readLine();
-				st.delete(str);
-				break;
-			case 'D':
-				st.dump();
-				break;
-			case 's':
-				System.out.println("Table size: " + st.size());
-				break;
-			case 'q':
-				System.out.println("Program terminated.");
-				System.exit(0);
-				break;
-			case 'h':
-				printMenu();
-				break;
-			default:
-				System.out.print("**** Sorry, No menu item named '");
-				System.out.println(c + "'");
-			}
-		}
-	}
+  private static void test(boolean c, String s){
+    if(c){
+      System.out.println(s);
+      System.exit(1);
+    }
+  }
 }
